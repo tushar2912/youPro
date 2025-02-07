@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const watchHistoryVideoItemSchema = new mongoose.Schema({
     videoId: {
@@ -47,6 +48,7 @@ const userSchema = new mongoose.Schema(
         },
         refreshToken: {
             type: String,
+            default: "",
         },
     },
     {
@@ -68,9 +70,9 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 userSchema.methods.generateAccessToken = function() {
-    jwt.sign(
+    return jwt.sign(
         {
-            _id: this.ObjectId,
+            _id: this._id,
             email: this.email,
             username: this.userName,
             fullname: this.fullName
@@ -81,12 +83,12 @@ userSchema.methods.generateAccessToken = function() {
         }        
 
     )
-}
+};
 
 userSchema.methods.refreshAccessToken = function() {
-    jwt.sign(
+    return jwt.sign(
         {
-            _id: this.ObjectId,
+            _id: this._id,
         },
         process.env.REFRESH_TOKEN,
         {
