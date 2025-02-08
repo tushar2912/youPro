@@ -241,7 +241,14 @@ const getCurrentUserDetails = asyncHandler(async(req,res)=>{
 
 
 const updateAccountDetails = asyncHandler(async(req,res)=>{
-    
+    const {userName, email} = req.body;
+
+    const user = await User.findById(req.user._id)
+
+    user.userName = userName || user.userName
+    user.email = email || user.email
+
+    await user.save({validateBeforeSave: true})
 })
 
 
@@ -250,5 +257,6 @@ export {
     loginUser,
     logoutUser,
     refreshAccessToken,
-    changeCurrentPassword
+    changeCurrentPassword,
+    updateAccountDetails
 };
